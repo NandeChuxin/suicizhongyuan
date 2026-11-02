@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="碎瓷重圆 · 数字修复室">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1727"/>
+      <stop offset="0.52" stop-color="#273344"/>
+      <stop offset="1" stop-color="#141e2d"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.46" cy="0.38" r="0.7">
+      <stop offset="0" stop-color="#52607844"/>
+      <stop offset="1" stop-color="#52607800"/>
+    </radialGradient>
+    <radialGradient id="gold" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#c9a96133"/>
+      <stop offset="1" stop-color="#c9a96100"/>
+    </radialGradient>
+    <linearGradient id="seam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9a961"/>
+      <stop offset="1" stop-color="#e8d59a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <!-- 月洞拱窗 -->
+  <circle cx="560" cy="300" r="230" fill="none" stroke="#c9a96122" stroke-width="2"/>
+  <circle cx="560" cy="300" r="212" fill="none" stroke="#c9a96112" stroke-width="1"/>
+  <ellipse cx="560" cy="300" rx="360" ry="250" fill="url(#gold)"/>
+  <!-- 远山 -->
+  <path d="M180 470c80-70 140-90 210-40s120 20 190-40 150-60 240 10 140 40 180 30v150H180Z" fill="#2b3a52" opacity="0.55"/>
+  <path d="M180 500c70-50 130-60 190-20s130 10 200-40 160-40 230 20 120 20 180 10v120H180Z" fill="#1b2740" opacity="0.7"/>
+  <!-- 梅瓶（金缮裂纹） -->
+  <g transform="translate(560 300)">
+    <path d="M0-150c-16 0-30 10-30 26 0 10 8 18 8 34 0 40-62 60-62 148 0 60 34 92 84 92s84-32 84-92c0-88-62-108-62-148 0-16 8-24 8-34 0-16-14-26-30-26Z"
+          fill="#e9e2cf" opacity="0.92"/>
+    <path d="M0-150c-16 0-30 10-30 26 0 10 8 18 8 34 0 40-62 60-62 148 0 60 34 92 84 92s84-32 84-92c0-88-62-108-62-148 0-16 8-24 8-34 0-16-14-26-30-26Z"
+          fill="none" stroke="#2c4a7c" stroke-width="1.5" opacity="0.35"/>
+    <path d="M-34-92l28 30-22 46 34 40-40 58 30 40" fill="none" stroke="url(#seam)" stroke-width="5" stroke-linecap="round" opacity="0.95"/>
+    <path d="M40-90L12-56l26 44-30 44 34 52" fill="none" stroke="url(#seam)" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+    <path d="M-104 20c-1 34 2 66 10 96" fill="none" stroke="#2c4a7c" stroke-width="10" opacity="0.28"/>
+    <ellipse cx="-30" cy="60" rx="14" ry="26" fill="#2c4a7c" opacity="0.30"/>
+    <ellipse cx="34" cy="-6" rx="12" ry="20" fill="#2c4a7c" opacity="0.24"/>
+    <ellipse cx="26" cy="120" rx="16" ry="14" fill="#2c4a7c" opacity="0.26"/>
+  </g>
+  <!-- 金色竖排文案 -->
+  <text x="905" y="120" fill="#f2ead8" font-family="SimSun,'Songti SC',serif" font-size="86" letter-spacing="20" writing-mode="tb" dominant-baseline="hanging">碎瓷重圆</text>
+  <text x="975" y="150" fill="#b7c1cf" font-family="SimSun,'Songti SC',serif" font-size="24" letter-spacing="8" writing-mode="tb">千年之碎 · 今朝重圆</text>
+  <text x="1032" y="150" fill="#c9a961b0" font-family="Arial,sans-serif" font-size="11" letter-spacing="4" writing-mode="tb">PORCELAIN · REUNITED</text>
+  <!-- 朱砂印 -->
+  <g transform="translate(852 470)">
+    <rect width="74" height="74" rx="6" fill="#b23a2e"/>
+    <text x="37" y="30" fill="#f6efe2" font-family="SimSun,serif" font-size="30" text-anchor="middle">惜</text>
+    <text x="37" y="64" fill="#f6efe2" font-family="SimSun,serif" font-size="30" text-anchor="middle">物</text>
+  </g>
+  <text x="60" y="580" fill="#9fb0c0" font-family="Arial,sans-serif" font-size="14" letter-spacing="4">数字修复室 · 拾起散落的青花，接续一段生活</text>
+</svg>

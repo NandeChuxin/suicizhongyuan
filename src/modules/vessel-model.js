@@ -14,13 +14,39 @@ export function vesselModelUrl(path) {
   return `${MODEL_BASE}${path}`;
 }
 
+// 用 fetch + 流式读取 + parseAsync，而不是 GLTFLoader.loadAsync：
+// 后者的 FileLoader 会在并发初始化时被 LoadingManager 的 abortController 波及（net::ERR_ABORTED），
+// 主应用里 hero / 器灵 / 每一件器物同时进场时极易触发，导致静默回退程序化器身。
+// parseAsync 接收 ArrayBuffer，GLB 自包含材质与贴图，不依赖外部资源路径。
 export async function loadVesselModel(path, { onProgress } = {}) {
   const url = vesselModelUrl(path);
   try {
-    const loader = new GLTFLoader();
-    const gltf = await loader.loadAsync(url, event => {
-      if (onProgress && event.total) onProgress(event.loaded / event.total);
-    });
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const total = Number(response.headers.get('content-length')) || 0;
+    let data;
+    if (response.body?.getReader && total) {
+      const reader = response.body.getReader();
+      const chunks = [];
+      let loaded = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        loaded += value.length;
+        onProgress?.(loaded / total);
+      }
+      data = new Uint8Array(loaded);
+      let offset = 0;
+      for (const chunk of chunks) { data.set(chunk, offset); offset += chunk.length; }
+    } else {
+      data = new Uint8Array(await response.arrayBuffer());
+      if (data.byteLength) onProgress?.(1);
+    }
+    const resourcePath = url.slice(0, url.lastIndexOf('/') + 1);
+    // GLTFLoader.parse 只识别 ArrayBuffer（或 glTF JSON 字符串），传 Uint8Array 会得到
+    // “Unsupported asset. glTF versions >=2.0 are supported.”，因此这里交回底层 buffer。
+    const gltf = await new GLTFLoader().parseAsync(data.buffer, resourcePath);
     const root = gltf.scene;
     root.name = path;
     return {
@@ -31,6 +57,7 @@ export async function loadVesselModel(path, { onProgress } = {}) {
       dispose() { disposeModel(root); }
     };
   } catch (error) {
+    console.warn('[model] 加载失败：', url, error?.message || error);
     return { ok: false, url, error };
   }
 }

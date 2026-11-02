@@ -395,7 +395,7 @@ function clearModelTask(path){modelCache.delete(path);modelProgress.delete(path)
 // —— ① 模型加载进度条 ——
 // 只在「需要真实 GLB 的屏」且该器物未缓存时显示：抉择/证书屏走进度条，其余展示屏静默预取。
 // total=0 时用不确定进度动画；完成 0.4s 淡出；失败/15s 无完成回调判定失败 → [重试]（一次）/[跳过]（程序化兜底）。
-const GLB_VIEWS=new Set(['commission','memory','choice','certificate','exhibit']); // 展示真实 GLB 的屏
+const GLB_VIEWS=new Set(['cabinet','commission','memory','choice','certificate','exhibit']); // 展示真实 GLB 的屏
 const GLB_BAR_VIEWS=new Set(['choice','certificate']);                          // 显示进度条的屏
 const modelSkipped=new Set(); // 本会话内用户选择跳过 → 不再打扰（会话级，不写存档）
 let modelUi=null;

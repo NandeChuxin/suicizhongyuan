@@ -1,14 +1,27 @@
-// 真实瓷器 GLB 加载：网页副本放在 public/models/ 下，仅做几何简化 + WebP 纹理，
-// 禁用 meshopt/Draco/quantize 压缩（int16 量化在 Three.js 版本不匹配时会导致错位），
-// 保留 float32 顶点 → 无需额外解码器，Three.js 原生 GLTFLoader 直接加载。
+// 真实瓷器 GLB 加载：网页副本放在 public/models/ 下，几何简化 + Draco 压缩 + WebP 纹理。
+// Draco 只压缩几何，解码后仍是 float32 顶点，不涉及 int16 量化，因此不会出现此前的错位；
+// 解码器文件随站点发布在 public/draco/，不依赖外部 CDN。
 // 与考察模块共用 measureObject / disposeModel，避免重复实现包围盒与资源释放。
 // 任何失败都返回 { ok:false }，调用方静默回退程序化器身——模型缺失不应让页面出错。
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { measureObject, disposeModel } from '../kaocha/kernel/gltf.js';
 
 // Vite base 为 './'，public/ 下文件原样拷贝到 dist，因此模型走相对路径。
 const MODEL_BASE = './models/';
+
+// Draco 解码器随站点一起发布（public/draco/），不依赖外部 CDN。
+// 单例复用：DRACOLoader 内部会缓存 decoder 实例与 worker，多件器物共享可省一次解码器下载。
+// 解码结果是 float32 顶点，不涉及 KHR_mesh_quantization，因此不会复现此前的顶点错位。
+let dracoLoader = null;
+function shareDracoLoader() {
+  if (!dracoLoader) {
+    dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(new URL('./draco/', document.baseURI).href);
+  }
+  return dracoLoader;
+}
 
 export function vesselModelUrl(path) {
   return `${MODEL_BASE}${path}`;
@@ -46,7 +59,9 @@ export async function loadVesselModel(path, { onProgress } = {}) {
     const resourcePath = url.slice(0, url.lastIndexOf('/') + 1);
     // GLTFLoader.parse 只识别 ArrayBuffer（或 glTF JSON 字符串），传 Uint8Array 会得到
     // “Unsupported asset. glTF versions >=2.0 are supported.”，因此这里交回底层 buffer。
-    const gltf = await new GLTFLoader().parseAsync(data.buffer, resourcePath);
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(shareDracoLoader());
+    const gltf = await loader.parseAsync(data.buffer, resourcePath);
     const root = gltf.scene;
     root.name = path;
     return {

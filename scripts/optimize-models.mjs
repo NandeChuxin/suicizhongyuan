@@ -1,10 +1,10 @@
 // 真实瓷器 GLB → 网页优化副本。
 // 原始文件保留在项目根目录不动；产物写入 public/models/，供运行时按需加载。
-// 优化内容：几何简化到约 20% 顶点 + 贴图降到 2K WebP。
-// 关键：不用 meshopt/Draco/quantize 压缩——这些压缩方法会把 float32 顶点转 int16，
-// Three.js 对 KHR_mesh_quantization 的 dequantize 需要精确参数匹配，
-// 版本不匹配会导致 int16 被当成 raw float32 读取，坐标爆到 ±32768 → 模型七零八落错位。
-// 直接保留 float32 顶点（文件稍大但绝对正确），纹理用 WebP 压缩。
+// 优化内容：几何简化到约 8% 顶点 + 贴图降到 2K WebP + Draco 压缩几何。
+// 之前禁用所有压缩以规避「int16 顶点被当 float32 读取」的错位，但代价是每件模型约 10MB，
+// GitHub Pages 首屏要同时拉 3 件（首页主角 / 器灵 / 当前器物），合计 30MB 以上，加载极慢。
+// 改用 Draco：解码器输出 float32 顶点，不涉及 KHR_mesh_quantization，因此不会复现错位；
+// 解码器文件已拷贝到 public/draco/，运行时由 DRACOLoader 加载（见 src/modules/vessel-model.js）。
 //
 // 用法：
 //   npm run models -- --force   # 全部重做
@@ -28,9 +28,9 @@ const MODELS = [
   ['青花玲珑镂空碗.glb', 'models/vessels/linglong.glb']
 ];
 
-// 简化后保留的顶点比例。原始 78 万面 → 约 30 万面（20%），曲面完整度好。
-const SIMPLIFY_RATIO = '0.2';
-const SIMPLIFY_ERROR = '0.0005';
+// 简化后保留的顶点比例。原始 78 万面 → 约 12 万面（8%），配合 2K 贴图在网页尺寸下看不出差别。
+const SIMPLIFY_RATIO = '0.08';
+const SIMPLIFY_ERROR = '0.001';
 const TEXTURE_SIZE = '2048';
 
 const force = process.argv.includes('--force');
@@ -50,11 +50,11 @@ for (const [source, target] of MODELS) {
   mkdirSync(dirname(output), { recursive: true });
   const before = statSync(input).size;
   const started = Date.now();
-  // --compress false：禁用 meshopt/draco/quantize 压缩，保留 float32 顶点。
+  // --compress draco：几何走 Draco（运行时由 DRACOLoader 解码为 float32，不会错位）。
   // --flatten false --join false：保留节点层级，避免未来多部件模型被合并。
   const args = [
     '--yes', '@gltf-transform/cli@4', 'optimize', input, output,
-    '--compress', 'false',
+    '--compress', 'draco',
     '--simplify-ratio', SIMPLIFY_RATIO,
     '--simplify-error', SIMPLIFY_ERROR,
     '--texture-compress', 'webp',

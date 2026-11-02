@@ -1,6 +1,6 @@
 // 「器灵 · 阿圆」3D 形象：独立小场景渲染 public/models/qiling.glb。
 // 约束：
-//   · 复用 vessel-model.js 的加载管线（GLTFLoader + meshopt + fitToHeight）；
+//   · 复用 vessel-model.js 的加载管线（fetch + Draco 解码 + fitToHeight）；
 //   · 任何失败（下载 / 解析 / WebGL）都返回 null，由 guide-character.js 静默回退 2D 剪影；
 //   · 仅在可见时渲染（rAF 门控），减少动态 / 低性能模式不播动画只做静态呈现；
 //   · 不写任何存档，不参与任何流程状态。

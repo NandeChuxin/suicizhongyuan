@@ -1,0 +1,63 @@
+// 人物委托为原创故事；观察提示对应项目的数字纹样，不作为馆藏鉴定依据。
+// 器物原型参考图来自故宫博物院官网公开藏品资料，详见 public/patterns/real/ATTRIBUTION.md。
+export const CULTURE = {
+  meiping: { person: '茶铺后人 · 林青', wish: '祖母总把这只瓶放在茶柜上。请留住枝头那些相接的花鸟，让我还能想起她开门迎客的早晨。', clue: '先看花枝与禽鸟的朝向，再看近足处缠枝莲的枝蔓。让断开的青色笔画接续，比只看外轮廓更容易找到相邻片。', detail: '嘉靖民窑青花常见花鸟构图，近足多饰缠枝莲带。观察这件数字梅瓶，试着从一朵花追到下一朵花，体会重复中的变化。', ending: '修好的瓶回到茶柜上。林青在旁边放了一张祖母的旧照片，茶铺又有了迎客的春天。', theme: '惜物 · 家庭记忆' },
+  yuhuchun: { person: '考古实习生 · 小周', wish: '我们为每一片留下了记录。请把缠枝莲拼回来，也请让后来的人知道，哪些地方曾经断裂。', clue: '先找腹间大朵莲花的中心，再顺着枝蔓向上连接颈部的回纹与卷草。图画的方向能帮助判断碎片是否转反。', detail: '缠枝莲自元代起是青花瓷最经典的主题纹样之一，枝蔓相连，寓意生生不息。这件数字器物的落选经历为创作设定。', ending: '小周把拼合前后的照片放进档案。展签既写器物之美，也写碎片如何重新相遇。', theme: '记录 · 文化守护' },
+  jiangjun: { person: '码头讲解员 · 阿海', wish: '我想让孩子们知道，瓷器怎样从一座小镇走向远方。请让云龙的轮廓重新清楚起来。', clue: '先辨云龙主体的方向，再连接上下卷曲的枝蔓与莲瓣。密集纹样处尤其要检查旋转角度。', detail: '元代青花云龙常与缠枝牡丹同饰一器，也是外销瓷的黄金时代。外销与沉船经历为创作设定，航线不可考。', ending: '阿海把它放进码头的小展柜。孩子们沿着地图看远方，也追问那些把瓷装上船的人。', theme: '交流 · 瓷行天下' },
+  gaozu: { person: '学徒 · 小禾', wish: '师傅说，学手艺要记住失败的那一窑。请接好这片红，也替我留住重新尝试的勇气。', clue: '先找到杯足与杯腹的弧度变化，再对齐那片铜红的边缘。颜色接近时，断口形状是第二条线索。', detail: '釉里红以铜作为呈色元素，元代创烧，转把杯是元代高足杯的时代特征。具体配方与烧成条件需要专业资料和实作学习。', ending: '小禾把杯摆在练习台旁。第一次落笔不稳时，他想起那句话：再试一次。', theme: '探索 · 匠人精神' },
+  suantou: { person: '展厅策划人 · 闻笙', wish: '这抹红背后有技艺，也有民间传说。请把它们分开讲清，让观众既看见美，也理解人的劳动。', clue: '没有明显纹样时，比较瓶颈、肩部和腹部的弧度。釉面明暗只作辅助，不把颜色相近当成相邻。', detail: '关于窑工之女的故事属于民间传说，不是红釉的科学成因。这里的颜色与光泽为数字表达；蒜头瓶器型可参考故宫藏白釉塑贴红蟠螭纹蒜头瓶。', ending: '闻笙写了两张展签：一张讲红釉工艺，一张讲地方传说。观众在美与故事之间，也看见真实的劳动。', theme: '求真 · 地方叙事' },
+  linglong: { person: '作坊后辈 · 阿宁', wish: '小时候，师傅会把碗举到灯前，说这是给光留的门。请把那些小小的光重新接起来。', clue: '观察玲珑眼排列的节奏和青花边饰。先对齐一排孔眼，再检查两侧断口，避免相似碎片错位。', detail: '玲珑瓷在坯体上镂出孔眼，并以釉形成透光效果。名字中的“镂空”不意味着成器后每个孔都敞开；薄胎透光的审美可参考故宫藏永乐影青碗。', ending: '阿宁把碗举到灯下，光点落在新学徒的手上。这一次，轮到他讲“给光留的门”。', theme: '传承 · 手艺有光' }
+};
+
+export const CULTURE_SOURCES = [
+  ['故宫博物院 · 陶瓷锔补工艺研究', 'https://www.dpm.org.cn/journal/256084.html'],
+  ['中国非物质文化遗产网 · 景德镇手工制瓷传承', 'https://www.ihchina.cn/project_details/10291'],
+  ['故宫博物院数字文物库 · 器物原型参考', 'https://digicol.dpm.org.cn/'],
+  ['原型图片来源与许可说明', './patterns/real/ATTRIBUTION.md']
+];
+
+export const REPAIR_LABELS = { traditional: '隐痕修复', kintsugi: '金线表达', preserve: '现状保存', juci: '锔瓷体验' };
+
+// 统一内容分层标签：全站只用这五种称谓，不再混用「真实故事」「真实还原」等说法。
+export const LAYER_LABELS = {
+  fact: '史实依据',
+  legend: '民间传说',
+  fiction: '原创叙事',
+  schematic: '数字示意',
+  pending: '待人工核实'
+};
+
+// 「人—技艺—城市」三层关系说明：真实资料解释文化，原创人物建立情感，用户操作形成体验。
+export const TRIANGLE_NOTE = '真实资料负责解释文化 · 原创人物负责建立情感 · 你的双手负责形成体验';
+
+// 六件器物的文化学习主题：六件连起来构成一条文化学习路径，而不只是六关游戏。
+export const STUDY_THEMES = {
+  meiping: '纹样 · 绘制与日常使用',
+  yuhuchun: '官窑制度 · 检验与考古记录',
+  jiangjun: '瓷器贸易 · 文化交流',
+  gaozu: '窑火控制 · 失败与匠人经验',
+  suantou: '民间传说与工艺事实的区分',
+  linglong: '分工 · 师徒学习与当代传承'
+};
+
+// 由 vessels.js 的 culture.contentLayers 生成分层标签 chips（供展签 / 抽屉复用）。
+// 固定附一枚「数字示意」：本作所有交互均为数字转译，须始终在场。
+export function layerChips(v) {
+  const layers = v?.culture?.contentLayers || {};
+  const chips = ['schematic'];
+  if (layers.fact) chips.push('fact');
+  if (layers.legend) chips.push('legend');
+  if (layers.fiction) chips.push('fiction');
+  return `<span class="layer-chips" role="list" aria-label="内容分层">${chips.map(k =>
+    `<i role="listitem" data-layer="${k}">${LAYER_LABELS[k]}</i>`).join('')}</span>`;
+}
+
+// 分层明细（含正文），供「我读懂的器物档案」与知识抽屉使用。
+export function layerDetails(v) {
+  const layers = v?.culture?.contentLayers || {};
+  return [
+    layers.fact && `【${LAYER_LABELS.fact}】${layers.fact}`,
+    layers.legend && `【${LAYER_LABELS.legend}】${layers.legend}`,
+    layers.fiction && `【${LAYER_LABELS.fiction}】${layers.fiction}`
+  ].filter(Boolean);
+}

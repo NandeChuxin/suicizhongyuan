@@ -1,0 +1,25 @@
+{
+  "name": "porcelain-reunion",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "prebuild": "node scripts/collect-notices.mjs",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port ${PORT:-4173}",
+    "test": "node --test tests/modules.test.js tests/vessels.test.js tests/guide.test.js tests/guide-remote.test.js tests/puzzle3d.test.js tests/puzzle3d-bench.test.js tests/progress-3d.test.js tests/hologram.test.js tests/qiling-eye-pearl.test.js",
+    "assets": "node scripts/generate-patterns.mjs",
+    "models": "node scripts/optimize-models.mjs",
+    "start": "vite --host 0.0.0.0 --port $PORT"
+  },
+  "dependencies": {
+    "d3-delaunay": "^6.0.4",
+    "gsap": "^3.13.0",
+    "html2canvas": "^1.4.1",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.7"
+  }
+}

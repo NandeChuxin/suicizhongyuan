@@ -1,0 +1,255 @@
+/* 《碎瓷重圆》讲解体验样式：问答面板 / 古人讲解员 / 自动导览 / 展厅热点。
+   沿用全站美术语言（墨蓝夜色、宣纸、青花、窑火金线），并复用 immersive.css 的 :root 变量。
+   移动端优先保证 375px 不溢出，且字幕不遮挡器物与主按钮。 */
+
+/* ===== 常驻入口按钮（上移，避免与分享按钮重叠）===== */
+.guide-fab{position:fixed;right:22px;bottom:82px;z-index:40;padding:13px 20px;border-radius:999px;
+ background:linear-gradient(125deg,#2c4a7cc9,#141e2dc9);border:1px solid #c9a961aa;color:var(--clay);
+ letter-spacing:3px;font-size:14px;box-shadow:0 14px 40px #050b1788;backdrop-filter:blur(12px)}
+.guide-fab:hover{border-color:var(--gold);color:#fff}
+body.guide-open .guide-fab{opacity:.5}
+
+/* ===== 问答面板 ===== */
+.guide-panel{--gp-fs:16px;position:fixed;right:0;top:100px;bottom:0;width:376px;max-width:96vw;z-index:45;
+ display:flex;flex-direction:column;background:linear-gradient(160deg,#1b2740f2,#101a2bf2);
+ border-left:1px solid #c9a96133;box-shadow:-24px 0 60px #050b1799;backdrop-filter:blur(18px);color:var(--paper)}
+/* min-height:max-content：面板是 flex 列，头部若只按 auto 高度算会被压扁（46px），
+   「当前讲解对象」那行会溢出到下方设置条上，把「0.8×」按钮盖住点不到。 */
+.gp-head{flex:0 0 auto;min-height:max-content;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 18px 12px;border-bottom:1px solid #faf8f31a}
+.gp-kicker{display:block;font:var(--fs-min)/1.6 Arial,sans-serif;letter-spacing:3px;color:var(--gold)}
+.gp-object{display:block;margin-top:5px;font-size:15px;letter-spacing:1px;color:var(--clay)}
+.gp-head-actions{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+.gp-head-actions .quiet{font-size:var(--fs-small);letter-spacing:1px;padding:6px 8px}
+.gp-scroll{flex:1;overflow-y:auto;padding:14px 18px 6px;scrollbar-width:thin}
+.gp-recos{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.gp-reco{background:#faf8f30a;border:1px solid #c9a9613d;border-radius:999px;padding:7px 12px;color:#cfd8e4;
+ font-size:var(--fs-small);letter-spacing:.6px;text-align:left;transition:border-color .3s}
+.gp-reco:hover{border-color:var(--gold);color:var(--clay)}
+.gp-answer{margin-bottom:16px;padding:14px 15px;border:1px solid #c9a9612b;border-radius:6px;background:#faf8f308}
+.gp-answer.pending{opacity:.75}
+.gp-q{margin:0 0 8px;font-size:var(--fs-small);letter-spacing:.6px;color:#8fa3bd}
+.gp-title{margin:0 0 8px;font-size:16px;font-weight:400;letter-spacing:1px;color:var(--clay)}
+.gp-text{margin:0;font-size:var(--gp-fs);line-height:2;color:#d7dde6}
+.gp-wait{color:#8fa3bd;font-style:italic}
+.gp-layers{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}
+.gp-chip{font:var(--fs-min)/1.6 Arial,sans-serif;letter-spacing:2px;padding:4px 9px;border-radius:3px;border:1px solid #c9a96155;color:var(--gold)}
+.gp-chip[data-layer="fact"]{border-color:#7fb2d8aa;color:#9fc7e6}
+.gp-chip[data-layer="legend"]{border-color:#c9a961aa;color:#e2c88b}
+.gp-chip[data-layer="fiction"]{border-color:#b98fc4aa;color:#d3b0dd}
+.gp-chip[data-layer="schematic"]{border-color:#7fbfa8aa;color:#9fd9c3}
+.gp-chip[data-layer="pending"]{border-color:#c07f6baa;color:#e0a794}
+.gp-sources{margin:6px 0 4px;font-size:var(--fs-small)}
+/* 联想入口：点一下即以相邻问题重新提问（连回展厅展品或相邻知识）。 */
+.gp-related{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.gp-related .gp-reco{font-size:var(--fs-small);padding:6px 10px}
+.gp-sources summary{cursor:pointer;color:var(--gold);letter-spacing:1px}
+.gp-sources ul{margin:8px 0 0;padding-left:18px;line-height:1.9}
+.gp-sources a{color:#bcd2e6}
+.gp-nosource{color:#8493a5;margin:6px 0 4px}
+.gp-voicemark{color:#8fa3bd;margin:4px 0 8px}
+.gp-actions{display:flex;gap:8px}
+.gp-actions .quiet{border:1px solid #c9a96144;border-radius:3px;padding:7px 11px;font-size:var(--fs-small);letter-spacing:1px;color:#c9a961}
+.gp-ask{padding:12px 18px 6px;border-top:1px solid #faf8f31a}
+.gp-ask input{padding:11px 0;font-size:var(--gp-fs)}
+.gp-ask-row{display:flex;gap:8px;margin:12px 0 4px}
+.gp-ask-row .primary{padding:11px 14px;font-size:14px;letter-spacing:3px;width:auto;flex:1}
+.gp-ask-row .quiet{border:1px solid #c9a96144;border-radius:3px;padding:11px 12px;font-size:var(--fs-small);color:#c9a961}
+.gp-disclaimer{padding:0 18px 14px;color:#8493a5;line-height:1.9}
+.gp-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* 首次出现前的既有声明块（原创数字角色，不是真实历史人物复原）。 */
+.gc-disclaim{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);width:210px;margin:0;z-index:4;
+ background:#101a2bdd;border:1px solid #c9a96155;border-radius:5px;padding:7px 9px;
+ font-size:11px;line-height:1.7;color:#cfd8e4;text-align:center;pointer-events:none;backdrop-filter:blur(6px)}
+.gc-disclaim[hidden]{display:none!important}
+
+/* ===== 联网讲解（远程大模型适配层）===== */
+/* 未配置远程服务：开关置灰（提示文案由 aria-label / title 提供）。 */
+.gp-head-actions .quiet[disabled]{opacity:.45;cursor:not-allowed}
+/* 流式输出中的打字机光标；减少动态时不闪烁。 */
+.gp-answer.streaming .gp-text::after{content:'▍';margin-left:2px;color:var(--gold);animation:gp-cursor 1s steps(2) infinite}
+@keyframes gp-cursor{50%{opacity:0}}
+/* 回退提示与模型选择行。 */
+.gp-fallback{margin:8px 0 0;color:#e0a794}
+.gp-models{padding:10px 18px 0}
+.gp-models select{width:100%;max-width:220px;background:#101a2b;border:1px solid #c9a96144;border-radius:3px;color:var(--paper);padding:8px 10px;font-size:var(--fs-small);letter-spacing:.6px}
+.gp-models select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.gp-answer.streaming .gp-text::after{animation:none}}
+
+/* ===== 古人讲解员（水墨剪影 + 窑火粒子）===== */
+/* 讲解角色：既是形象，也是「窑火问答」的入口——因此可点击、带焦点环。
+   固定在右上角（页头下方），完全不遮挡中间的瓷器主体；
+   面板展开时整体左移，贴在面板左侧继续可见。 */
+.guide-character{position:fixed;right:14px;top:96px;width:178px;height:240px;z-index:36;pointer-events:auto;
+ cursor:pointer;display:block;opacity:0}
+.guide-character[hidden]{display:none}
+body.guide-open .guide-character{right:390px}
+.guide-character:focus-visible{outline:2px solid var(--gold);outline-offset:6px;border-radius:6px}
+.guide-character:hover .gc-label{border-color:var(--gold);color:#fff}
+/* 器灵阿圆的 3D 画布：盖在水墨剪影上层，切换时以透明度过渡。 */
+.gc-3d{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:2;pointer-events:none}
+.gc-ink{transition:opacity .45s ease}
+.gc-particles,.gc-ink{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gc-particles{mix-blend-mode:screen}
+.gc-label{position:absolute;top:-2px;left:50%;transform:translateX(-50%);white-space:nowrap;
+ font:var(--fs-min)/1.5 Arial,sans-serif;letter-spacing:2px;color:#c9a961cc;border:1px solid #c9a96155;border-radius:999px;padding:3px 9px;background:#101a2bcc}
+.gc-line{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:220px;margin:0;
+ font-size:var(--fs-small);line-height:1.85;letter-spacing:.4px;color:#e3e9f2;text-align:center;text-shadow:0 1px 8px #050b17cc}
+.gc-spark{position:absolute;width:14px;height:14px;margin:-7px;border-radius:50%;background:radial-gradient(circle,#f3d79a,#f3d79a00 70%);box-shadow:0 0 16px #f3d79a}
+.guide-character[data-state="thinking"] .gc-body{opacity:.8}
+.guide-character[data-state="speaking"] .gc-arm{transform-box:fill-box;transform-origin:0% 50%;animation:gc-point 3.4s ease-in-out infinite}
+@keyframes gc-point{0%,100%{transform:rotate(0)}45%{transform:rotate(-9deg)}}
+.guide-character[data-state="idle"] .gc-sleeve,.guide-character[data-state="speaking"] .gc-sleeve{transform-box:fill-box;transform-origin:100% 0%;animation:gc-sway 5.5s ease-in-out infinite}
+@keyframes gc-sway{0%,100%{transform:rotate(0)}50%{transform:rotate(3.2deg)}}
+
+/* ===== 自动导览控制条 ===== */
+.tour-bar{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:12px;
+ padding:11px 16px;border-radius:999px;background:#101a2bef;border:1px solid #c9a96144;backdrop-filter:blur(12px);color:var(--clay)}
+.tour-bar button{background:none;border:1px solid #c9a96155;border-radius:999px;padding:7px 13px;color:#c9a961;font-size:var(--fs-small);letter-spacing:1px}
+.tour-bar button:hover{border-color:var(--gold);color:#fff}
+.tour-bar .tour-count{font-size:var(--fs-small);letter-spacing:2px;color:#b9c2cd;min-width:70px;text-align:center}
+.tour-progress{position:absolute;left:0;right:0;top:0;height:2px;background:#faf8f31a;border-radius:999px;overflow:hidden}
+.tour-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c9a961,#f3d79a)}
+
+/* ===== 展厅热点（点击/键盘/触屏等价入口）===== */
+.exhibit-hotspots{position:absolute;inset:0;z-index:12;pointer-events:none}
+.hotspot-btn{position:absolute;pointer-events:auto;transform:translate(-50%,-50%);
+ padding:7px 12px;border-radius:999px;border:1px solid #c9a961aa;background:#101a2bc9;color:var(--clay);
+ font-size:var(--fs-small);letter-spacing:1px;backdrop-filter:blur(8px);box-shadow:0 6px 22px #050b1777}
+.hotspot-btn:before{content:'';position:absolute;left:-14px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:#f3d79a;box-shadow:0 0 12px #f3d79a88}
+.hotspot-btn:hover,.hotspot-btn:focus-visible{border-color:var(--gold);color:#fff}
+/* 靠近展品时环境变暗、器物获重点照明由 3D 层完成；此处只做展签的聚焦样式。 */
+body.exhibit-focus .exhibit-placard{border-color:#c9a96188;box-shadow:0 30px 80px #050b17b0,0 0 40px #c9a96126}
+
+/* ===== 移动端：底部抽屉，避免遮挡器物 ==== */
+@media (max-width:760px){
+ .guide-panel{left:0;right:0;top:auto;bottom:0;width:100%;max-width:none;max-height:72svh;border-left:0;border-top:1px solid #c9a96144;border-radius:16px 16px 0 0}
+ .guide-panel .gp-scroll{max-height:44svh}
+ .gp-head{padding-top:14px}
+ .guide-fab{right:14px;bottom:72px;padding:12px 17px;font-size:13px}
+ /* 矮视口/fitViewport 整体缩放下 72svh 锚定会把角色顶进页头区，盖住「♫ 声音」等按钮
+    （z36 > 页头 z10 且 pointer-events:auto，点击被 SVG 吃掉）。
+    改为锚定页头下方专位，层级降到 .screen(z4) 之下：擦边时页面按钮优先，
+    角色在空白区仍可点（与桌面端 v4 修订同思路）；拼合屏沿用桌面的隐藏规则。 */
+ .guide-character{top:64px;right:8px;bottom:auto;width:110px;height:150px;transform:scale(.9);transform-origin:top right;z-index:3}
+ body[data-view=puzzle] .guide-character{opacity:0!important;pointer-events:none!important}
+ .gc-line{width:170px;font-size:11px}
+ .tour-bar{left:12px;right:12px;transform:none;flex-wrap:wrap;justify-content:center;bottom:12px}
+ .tour-bar .tour-count{min-width:0}
+}
+
+/* ===== 无障碍：减少动态时不做粒子与摆动，只淡入淡出 ==== */
+/* [hidden] 守卫：display:flex 会压掉 hidden 属性的默认 display:none（与全站同款坑），
+   导致"收起 ×"等按钮看似无效。 */
+.guide-panel[hidden]{display:none!important}
+.tour-bar[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){
+ .gc-particles{display:none}
+ .guide-character[data-state="speaking"] .gc-arm,
+ .guide-character[data-state="idle"] .gc-sleeve,
+ .guide-character[data-state="speaking"] .gc-sleeve{animation:none}
+ .hotspot-btn{transition:none}
+}
+body.low-power .gc-particles{display:none}
+body.low-power .gc-arm,body.low-power .gc-sleeve{animation:none}
+
+/* ===== 展厅：内容分层标签行 ===== */
+.exhibit-layers{position:absolute;left:23%;width:49%;bottom:12%;margin:0;text-align:center;z-index:8;pointer-events:none}
+.exhibit-layers .layer-chips{justify-content:center;background:#101a2bcc;border:1px solid #c9a9612b;border-radius:999px;padding:5px 12px;backdrop-filter:blur(8px)}
+.exhibit-layers .layer-chips i{background:#faf8f30f;border-color:#c9a96155;color:#e2c88b}
+.exhibit-layers .layer-chips i[data-layer=fact]{border-color:#7fb2d8aa;color:#9fc7e6;background:#7fb2d810}
+.exhibit-layers .layer-chips i[data-layer=legend]{border-color:#c9a961aa;color:#e2c88b;background:#c9a96110}
+.exhibit-layers .layer-chips i[data-layer=fiction]{border-color:#b98fc4aa;color:#d3b0dd;background:#b98fc410}
+.exhibit-layers .layer-chips i[data-layer=schematic]{border-color:#7fbfa8aa;color:#9fd9c3;background:#7fbfa810}
+
+/* ===== 展厅：自动导览入口 ===== */
+#tour-start{position:absolute;left:50%;transform:translateX(-50%);bottom:23%;z-index:8;pointer-events:auto;
+ border:1px solid #c9a96166;border-radius:999px;padding:10px 20px;background:#101a2bcc;backdrop-filter:blur(10px);color:var(--gold);letter-spacing:2px;font-size:var(--fs-small)}
+#tour-start:hover{border-color:var(--gold);color:#fff}
+/* 靠近展品：环境（水墨远山 / 窑坊线稿）适度变暗，器物获重点照明（灯光由 3D 层负责）。 */
+body.exhibit-focus .background{opacity:.4}
+body.exhibit-focus .exhibit-layers{opacity:.85}
+
+/* ===== 启程页：可内联的讲解入口 ===== */
+.guide-inline{display:block;width:100%;margin-top:10px;text-align:center;font-size:var(--fs-small);letter-spacing:1px;color:#c9a961;border:1px solid #c9a96130;border-radius:3px;padding:9px 10px}
+.guide-inline:hover{border-color:var(--gold);color:#fff}
+
+@media (max-width:760px){
+ .exhibit-layers{position:static;width:100%;margin:8px 0}
+ #tour-start{position:static;transform:none;display:block;margin:12px auto 0;width:fit-content;max-width:92%}
+}
+/* ===== v4 观感修复：器灵阿圆定位 / 面板避让（2026-10-12，2026-10-13 修订） ===== */
+/* 桌面端：阿圆移到「3D 器身与右侧正文卡之间的专位」，层级低于页面文字（.screen z4），
+   与正文卡偶有擦边时文字在上。面板打开：右侧正文卡整体淡出让位（验收允许「淡出」），
+   阿圆贴靠面板左侧专位全程可见——修复「讲解内容性质时器灵消失」。 */
+@media (min-width:761px){
+ .guide-character{right:28%;top:104px;z-index:3}
+ body[data-view=puzzle] .guide-character{opacity:0!important;pointer-events:none!important}
+ /* 考察屏：右上是标题与站点地图，阿圆改驻右下空白区（手记卡/按钮/FAB 之外） */
+ body[data-view=tour] .guide-character{top:auto;bottom:178px;right:8%}
+ /* 面板打开：阿圆贴靠面板左侧（376+14），讲解/提问全程可见 */
+ body.guide-open:not(.cert-focus) .guide-character{right:calc(376px + 14px);opacity:1!important;pointer-events:auto!important}
+ /* 面板打开：面板覆盖范围内的右侧卡与场景元素整体淡出，避免「文字被面板裁一半」的观感 */
+ body.guide-open:not(.cert-focus) .tour-map,
+ body.guide-open:not(.cert-focus) #gyro,
+ body.guide-open:not(.cert-focus) #guide-tour,
+ body.guide-open:not(.cert-focus) .exhibit-placard,
+ body.guide-open:not(.cert-focus) .side-card.paper-card,
+ body.guide-open:not(.cert-focus) .hero-card,
+ body.guide-open:not(.cert-focus) .puzzle-panel,
+ body.guide-open:not(.cert-focus) .choice-option.right,
+ body.guide-open:not(.cert-focus) .exhibit-hotspots,
+ body.guide-open:not(.cert-focus) .exhibit-layers,
+ body.guide-open:not(.cert-focus) #tour-start{opacity:.14!important;transition:opacity .4s}/* !important 对冲切屏入场动画留下的内联 opacity:1 */
+ /* 居中内容（手记卡 / 证书 / 证书操作）左移半面板宽，保持完整可读不淡出 */
+ body.guide-open:not(.cert-focus) .certificate{left:calc(50% - 188px)}
+ body.guide-open:not(.cert-focus) .cert-actions{transform:translateX(calc(-50% - 188px))}
+ body.guide-open:not(.cert-focus) #tour-note{left:calc(50% - 188px)}
+}
+
+/* ≥2050px：#stage 已达 1800px 上限，右侧留白带足够宽，阿圆回右上角专位（避开锚定 #stage 的正文卡） */
+@media (min-width:2050px){
+ .guide-character{right:14px}
+}
+
+/* ===== 讲解字幕条（AI 合成语音 · 字幕与声音同源）=====
+   字号/位置由设置即时切换；pointer-events:none —— 字幕永不遮挡点击。
+   拼合屏底部被修复进度条占用，故该屏字幕上移到进度带上沿之上。 */
+.guide-sub{position:fixed;left:50%;transform:translateX(-50%);z-index:38;pointer-events:none;
+ max-width:min(720px,calc(100% - 48px));padding:10px 18px;border-radius:8px;
+ background:linear-gradient(160deg,#0e1727e6,#111c2de6);border:1px solid #c9a96140;
+ box-shadow:0 16px 46px #050b17a8;backdrop-filter:blur(12px);text-align:center;color:var(--paper)}
+.guide-sub[hidden]{display:none}
+.guide-sub[data-pos="bottom"]{bottom:26px}
+.guide-sub[data-pos="top"]{top:92px}
+body[data-view="puzzle"] .guide-sub[data-pos="bottom"]{bottom:152px}
+.gs-text{margin:0;font-size:var(--gs-fs,16px);line-height:1.8;letter-spacing:.6px;overflow-wrap:anywhere}
+/* 每行一条半透明金色底条：宽度贴合文字并居中，长句按行堆叠也不溢出面板 */
+.gs-cur{display:block;width:fit-content;max-width:100%;margin:1px auto;background:#c9a9612e;color:#f6ecd6;
+ border-radius:6px;padding:2px 10px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.gs-meta{display:block;margin-top:5px;font:var(--fs-min)/1.6 Arial,sans-serif;letter-spacing:2px;color:#93a4b6}
+/* 问答面板打开时让位：桌面把字幕条居中到面板左侧的可视区，避免被侧栏压住 */
+body.guide-open .guide-sub{left:calc(50% - 188px);max-width:min(680px,calc(100% - 424px))}
+
+/* ===== 面板「语音与字幕」设置条（语速 / 音色 / 字幕字号 / 位置 / 语音开关）===== */
+.gp-voice{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:9px 18px;border-bottom:1px solid #faf8f310}
+.gp-seg{display:flex;align-items:center;gap:4px}
+.gp-seg-label{font:var(--fs-min)/1.6 Arial,sans-serif;letter-spacing:2px;color:#8fa3bd;margin-right:2px}
+.gp-opt{background:#faf8f308;border:1px solid #c9a96133;border-radius:3px;padding:4px 8px;color:#c2cddb;
+ font:var(--fs-min)/1.4 Arial,sans-serif;letter-spacing:1px;transition:border-color .25s,color .25s}
+.gp-opt:hover:not(:disabled){border-color:var(--gold);color:var(--clay)}
+.gp-opt[aria-pressed="true"]{border-color:#c9a961cc;color:#f0e3c4;background:#c9a9611f}
+.gp-opt:disabled{opacity:.4;cursor:not-allowed}
+.gp-voice-toggle{border:1px solid #c9a96144;border-radius:3px;padding:4px 10px;color:#c9a961;font-size:var(--fs-min);letter-spacing:1px}
+.gp-voice-toggle.gp-opt-off{opacity:.6;color:#8fa3bd;border-color:#8fa3bd44}
+
+@media(max-width:760px){
+ .guide-sub{max-width:calc(100% - 24px);padding:8px 12px}
+ .guide-sub[data-pos="bottom"]{bottom:20px}
+ .guide-sub[data-pos="top"]{top:82px}
+ body[data-view="puzzle"] .guide-sub[data-pos="bottom"]{bottom:410px}
+ /* 移动端面板是底部抽屉：打开时占掉下半屏，字幕条临时上移到页头之下（关闭后回到用户所选位置） */
+ body.guide-open .guide-sub{left:50%;max-width:calc(100% - 24px);bottom:auto;top:82px}
+ .gp-voice{padding:8px 12px;gap:5px 8px}
+ .gp-opt{padding:5px 7px}
+}

@@ -1,0 +1,34 @@
+node_modules/
+dist/
+
+# 原始高模（单文件 68-90MB，超过 GitHub 100MB 限制；网页用副本在 public/models/）
+/*.glb
+
+# 本地/临时文件
+.tmp-img/
+.tmp-dir-list.txt
+.workbuddy/
+.trae/
+截图/
+*.genie
+
+# 调试临时 txt
+audit*.txt
+bc.txt
+be.txt
+bo.txt
+e1.txt
+e2.txt
+ev.txt
+f1.txt
+f2.txt
+fs.txt
+preview.txt
+r1.txt
+r2.txt
+sc.txt
+se.txt
+si.txt
+
+# 附件/竞赛材料
+*.docx

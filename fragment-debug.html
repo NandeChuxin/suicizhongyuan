@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>fragment debug</title>
+<style>html,body{margin:0;height:100%;background:#111}canvas{display:block}</style></head>
+<body>
+<script type="module">
+import * as THREE from 'three';
+import { create3DFragments, P3D } from '/src/modules/puzzle3d.js';
+import { VESSELS } from '/src/data/vessels.js';
+
+const q = new URLSearchParams(location.search);
+const id = q.get('v') || 'yuhuchun';
+if (q.get('amp') === '0') P3D.conchoidal.amp = 0;
+const vessel = VESSELS.find(v => v.id === id) || VESSELS[1];
+const built = create3DFragments(vessel, null, { low: false, quality: 'high' });
+const frag = built.fragments[0];
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a2332);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+document.body.append(renderer.domElement);
+const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, .01, 100);
+const geo = frag.mesh.geometry;
+geo.computeBoundingSphere();
+const c = geo.boundingSphere.center, r = geo.boundingSphere.radius * 2.6;
+camera.position.set(c.x + r * .35, c.y + r * .25, c.z + r);
+camera.lookAt(c);
+
+const mat = new THREE.MeshBasicMaterial({ color: q.get('side') === 'front' ? 0xff0000 : 0xffffff, side: q.get('side') === 'front' ? THREE.FrontSide : THREE.DoubleSide, wireframe: q.get('wire') === '1', depthTest: q.get('notest') !== '1', depthWrite: q.get('notest') !== '1' });
+let geo2 = geo;
+if (q.get('only') === 'outer') {
+  const p0 = geo.attributes.position.array, ix = geo.index.array;
+  const keep = [];
+  for (let i = 0; i < ix.length; i += 3) {
+    let outer = true;
+    for (let k = 0; k < 3; k++) {
+      const o = ix[i + k] * 3;
+      const r = Math.hypot(p0[o], p0[o + 2]);
+      // 外壁：顶点半径接近器表（不在内壁 inner = r - 0.16 附近）
+      // 用同 y 的内壁顶点对照太麻烦，这里用「法线朝外」判据
+    }
+    // 用三角形法线朝外判定外壁
+    const a = ix[i] * 3, b = ix[i + 1] * 3, c = ix[i + 2] * 3;
+    const ax = p0[b] - p0[a], ay = p0[b + 1] - p0[a + 1], az = p0[b + 2] - p0[a + 2];
+    const bx = p0[c] - p0[a], by = p0[c + 1] - p0[a + 1], bz = p0[c + 2] - p0[a + 2];
+    const nx = ay * bz - az * by, nz = ax * by - ay * bx;
+    const cx = (p0[a] + p0[b] + p0[c]) / 3, cz = (p0[a + 2] + p0[b + 2] + p0[c + 2]) / 3;
+    if (nx * cx + nz * cz > 0) { keep.push(ix[i], ix[i + 1], ix[i + 2]); }
+  }
+  geo2 = new THREE.BufferGeometry();
+  geo2.setAttribute('position', geo.attributes.position);
+  geo2.setAttribute('uv', geo.attributes.uv);
+  geo2.setIndex(keep);
+  window.__outerTris = keep.length / 3;
+}
+if (q.get('nonindexed') === '1') geo2 = geo2.toNonIndexed();
+if (q.get('parity') === '1') {
+  const g3 = geo2.index ? geo2.toNonIndexed() : geo2;
+  const n = g3.attributes.position.count / 3;
+  const col = new Float32Array(g3.attributes.position.count * 3);
+  for (let t = 0; t < n; t++) {
+    const c = t % 2 ? [0.1, 0.9, 0.2] : [0.95, 0.15, 0.15];
+    for (let k = 0; k < 3; k++) { col[(t * 3 + k) * 3] = c[0]; col[(t * 3 + k) * 3 + 1] = c[1]; col[(t * 3 + k) * 3 + 2] = c[2]; }
+  }
+  g3.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  geo2 = g3;
+  mat.vertexColors = true;
+  mat.color.set(0xffffff);
+}
+const mesh = new THREE.Mesh(geo2, mat);
+scene.add(mesh);
+
+const p0 = geo.attributes.position.array, ix = geo.index.array;
+let degen = 0, flipped = 0;
+for (let i = 0; i < ix.length; i += 3) {
+  const a = ix[i] * 3, b = ix[i + 1] * 3, c = ix[i + 2] * 3;
+  const ax = p0[b] - p0[a], ay = p0[b + 1] - p0[a + 1], az = p0[b + 2] - p0[a + 2];
+  const bx = p0[c] - p0[a], by = p0[c + 1] - p0[a + 1], bz = p0[c + 2] - p0[a + 2];
+  const nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
+  const area = .5 * Math.hypot(nx, ny, nz);
+  if (area < 1e-7) degen++;
+  const cx = (p0[a] + p0[b] + p0[c]) / 3, cz = (p0[a + 2] + p0[b + 2] + p0[c + 2]) / 3;
+  if (nx * cx + nz * cz < 0) flipped++;
+}
+window.__info = {
+  groups: geo.groups.map(g => ({ start: g.start, count: g.count, mat: g.materialIndex })),
+  idx: geo.index.count, tris: ix.length / 3, verts: geo.attributes.position.count,
+  degenerate: degen, inwardNormals: flipped
+};
+renderer.render(scene, camera);
+const pA = geo.attributes.position.array, ixA = geo.index.array;
+const rows = [];
+for (let i = 0; i < Math.min(24, ixA.length); i += 3) {
+  const a = ixA[i] * 3, b = ixA[i + 1] * 3, c = ixA[i + 2] * 3;
+  const ax = pA[b] - pA[a], ay = pA[b + 1] - pA[a + 1], az = pA[b + 2] - pA[a + 2];
+  const bx = pA[c] - pA[a], by = pA[c + 1] - pA[a + 1], bz = pA[c + 2] - pA[a + 2];
+  const nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
+  const cx = (pA[a] + pA[b] + pA[c]) / 3, cz = (pA[a + 2] + pA[b + 2] + pA[c + 2]) / 3;
+  rows.push({ tri: i / 3, sign: Math.sign(nx * cx + nz * cz), n: [+nx.toFixed(2), +ny.toFixed(2), +nz.toFixed(2)], v: [[pA[a], pA[a + 1], pA[a + 2]].map(x => +x.toFixed(2)), [pA[b], pA[b + 1], pA[b + 2]].map(x => +x.toFixed(2)), [pA[c], pA[c + 1], pA[c + 2]].map(x => +x.toFixed(2))] });
+}
+window.__rows = rows;
+const pN = geo.attributes.position.array;
+let nan = 0, inf = 0;
+for (const v of pN) { if (Number.isNaN(v)) nan++; else if (!Number.isFinite(v)) inf++; }
+window.__nan = { nan, inf, side: mat.side, tris: geo.index.count / 3 };
+window.__ready = true;
+</script>
+</body></html>

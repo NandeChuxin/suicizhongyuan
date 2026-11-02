@@ -1,0 +1,456 @@
+/*
+  《碎瓷重圆》融合出版衍生册 · 瓷器记忆手记
+  样式：墨蓝夜色底 + 宣纸卡；沿用项目设计令牌，纯 CSS/SVG，零三方依赖。
+*/
+:root {
+  --ink: #1a2332;
+  --paper-white: #faf8f3;
+  --gold: #c9a961;
+  --cinnabar: #b0432e;
+  --blue: #2c4a7c;
+  --paper-ink: #2c3a55;
+  --paper-line: #c3b48f;
+  --serif: SimSun, 'Songti SC', 'Noto Serif SC', serif;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 8%, #26374f 0%, var(--ink) 58%, #131a28 100%);
+  color: #d7dce4;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* 顶部工具条（仅屏幕） */
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 5%;
+  background: linear-gradient(#131a28f2, #131a28cc);
+  border-bottom: 1px solid #c9a9612e;
+  backdrop-filter: blur(6px);
+}
+.toolbar button {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: #f1e6c8;
+  background: #1d2a3e;
+  border: 1px solid var(--gold);
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: .2s;
+}
+.toolbar button:hover { background: #c9a96122; }
+.toolbar-hint { font-size: 11px; color: #93a3b6; letter-spacing: 1px; }
+
+/* 卷轴主体：居中纸张宽度 */
+.sheet {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 84px 22px 90px;
+}
+
+/* 宣纸卡通用底 */
+.card,
+.cover,
+.contents,
+.chapter,
+.colophon {
+  background: linear-gradient(165deg, #f7f1df, #eee3c2 60%, #e6d8b0);
+  color: var(--paper-ink);
+  border: 1px solid #b8a67c;
+  border-left: 3px solid var(--gold);
+  box-shadow: 0 26px 60px #050a14b0, inset 0 0 44px #a1824120;
+  padding: 38px 44px;
+  margin-bottom: 34px;
+}
+
+/* 分层标签 */
+.layer-tag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 2px 9px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.l-fact { color: var(--blue); }
+.l-legend { color: var(--cinnabar); }
+.l-orig { color: #8a7644; }
+
+/* ── 卷首 ── */
+.cover {
+  text-align: center;
+  padding: 66px 44px 52px;
+  border-left: 3px solid var(--gold);
+}
+.cover-kicker {
+  margin: 0 0 26px;
+  font-size: 12px;
+  letter-spacing: 6px;
+  color: #8a7644;
+}
+.cover-title {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  margin: 0 auto 22px;
+  font-size: 42px;
+  letter-spacing: 16px;
+  line-height: 1.35;
+  color: #223a5c;
+  height: 260px;
+  border-right: 1px solid #c9a96155;
+  padding-right: 16px;
+}
+.cover-sub {
+  margin: 26px 0 6px;
+  font-size: 15px;
+  letter-spacing: 5px;
+  color: #4a5a72;
+}
+.cover-rule {
+  width: 120px;
+  height: 1px;
+  margin: 24px auto;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  position: relative;
+}
+.cover-rule::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--gold);
+}
+.cover-mountain { display: block; width: min(100%, 520px); margin: 6px auto 0; }
+.cover-mountain svg { width: 100%; height: auto; display: block; }
+.seal { display: block; width: 92px; margin: 30px auto 6px; }
+.seal svg { width: 100%; height: auto; display: block; }
+.cover-foot {
+  margin: 22px 0 0;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #7d6a45;
+}
+
+/* ── 目录 ── */
+.contents h2 {
+  font-size: 20px;
+  letter-spacing: 8px;
+  color: #223a5c;
+  margin: 0 0 20px;
+  font-weight: normal;
+}
+.contents ol { list-style: none; margin: 0; padding: 0; }
+.contents li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 11px 2px;
+  border-bottom: 1px dashed #c3b48f88;
+}
+.contents li:last-child { border-bottom: 0; }
+.contents .num { color: var(--cinnabar); font-size: 17px; }
+.contents .name { font-size: 15px; letter-spacing: 1px; }
+.contents .meta { margin-left: auto; font-size: 12px; color: #7d6a45; }
+
+/* ── 章节 ── */
+.chapter { break-inside: auto; }
+.chapter-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #b8a67c;
+}
+.chapter-num {
+  flex: none;
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gold);
+  color: var(--cinnabar);
+  font-size: 30px;
+  line-height: 1;
+}
+.chapter-title h2 {
+  margin: 2px 0 6px;
+  font-size: 25px;
+  letter-spacing: 3px;
+  font-weight: normal;
+  color: #1f3557;
+}
+.chapter-sub { margin: 0; font-size: 13px; letter-spacing: 2px; color: #6d5c3c; }
+.chapter-index {
+  margin-left: auto;
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #8a7644;
+  writing-mode: vertical-rl;
+}
+
+.chapter-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 26px;
+  margin: 22px 0 14px;
+  padding: 0;
+}
+.chapter-meta > div { display: flex; gap: 8px; }
+.chapter-meta dt {
+  flex: none;
+  font-size: 12px;
+  color: #8a7644;
+  letter-spacing: 2px;
+}
+.chapter-meta dd { margin: 0; font-size: 14px; }
+
+.layerline { margin: 4px 0 18px; font-size: 12px; color: #6d5c3c; display: flex; gap: 10px; align-items: center; }
+
+.intro {
+  margin: 0 0 26px;
+  padding: 16px 20px;
+  font-size: 15px;
+  line-height: 2.05;
+  text-align: justify;
+  background: #faf8f366;
+  border-left: 2px solid var(--blue);
+}
+
+.section-title {
+  font-size: 17px;
+  letter-spacing: 5px;
+  font-weight: normal;
+  color: #223a5c;
+  margin: 30px 0 16px;
+}
+.section-title::after {
+  content: '';
+  display: inline-block;
+  width: 46px;
+  height: 1px;
+  margin-left: 14px;
+  vertical-align: middle;
+  background: var(--gold);
+}
+
+/* 修复委托 */
+.commission {
+  margin: 0 0 24px;
+  padding: 18px 22px;
+  border: 1px solid #c3b48f88;
+  background: #faf8f342;
+}
+.commission .section-title { margin-top: 0; }
+.commission dl { margin: 0; }
+.commission > dl > div {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px dashed #c3b48f66;
+}
+.commission > dl > div:first-child { border-top: 0; }
+.commission dt { font-size: 12px; color: #8a7644; letter-spacing: 2px; }
+.commission dd { margin: 0; font-size: 14px; text-align: justify; }
+
+/* 八段记忆 */
+.memories { list-style: none; margin: 0; padding: 0; }
+.memory {
+  display: grid;
+  grid-template-columns: minmax(0, 218px) 1fr;
+  gap: 22px;
+  padding: 20px 0;
+  border-top: 1px dashed #c3b48f88;
+  break-inside: avoid;
+}
+.memory-figure { margin: 0; }
+.memory-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #b8a67c;
+  background: #f3ecd8;
+}
+.memory-figure figcaption {
+  margin-top: 7px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #8a7644;
+}
+.memory-body h4 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  color: #1f3557;
+}
+.memory-year {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--cinnabar);
+}
+.memory-text { margin: 0 0 10px; font-size: 14px; line-height: 2.05; text-align: justify; }
+
+/* 匠人之声 */
+.voices { margin-top: 26px; }
+.voice {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 14px;
+  padding: 13px 0;
+  border-top: 1px dashed #c3b48f88;
+}
+.voice-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--cinnabar);
+}
+.voice p { margin: 0; font-size: 14px; line-height: 2; text-align: justify; }
+
+/* ── 末页：资料与创作说明 ── */
+.colophon h2 {
+  font-size: 23px;
+  letter-spacing: 7px;
+  font-weight: normal;
+  color: #1f3557;
+  margin: 0 0 24px;
+  text-align: center;
+}
+.colophon h3 {
+  font-size: 16px;
+  letter-spacing: 3px;
+  font-weight: normal;
+  color: #223a5c;
+  margin: 30px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #b8a67c;
+}
+.colophon p { margin: 0 0 12px; font-size: 14px; line-height: 2.05; text-align: justify; }
+.legend-explain { margin: 0; }
+.legend-explain > div {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px dashed #c3b48f66;
+  font-size: 14px;
+  text-align: justify;
+}
+.legend-explain > div:first-child { border-top: 0; }
+.proto-list { margin: 0; padding-left: 22px; }
+.proto-list li { font-size: 13.5px; line-height: 1.95; margin-bottom: 12px; }
+.proto-list b { color: #1f3557; font-weight: normal; }
+.ref-list { margin: 0; padding-left: 22px; }
+.ref-list li { font-size: 13.5px; line-height: 1.95; margin-bottom: 10px; }
+.ref-list a { color: var(--blue); word-break: break-all; }
+.note { font-size: 12px; color: #6d5c3c; }
+.statement {
+  margin-top: 26px;
+  padding: 16px 20px;
+  border: 1px solid var(--gold);
+  background: #faf8f355;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* ── 手机单列 ── */
+@media (max-width: 640px) {
+  .sheet { padding: 76px 12px 70px; }
+  .card, .cover, .contents, .chapter, .colophon { padding: 26px 20px; }
+  .cover { padding: 44px 20px 36px; }
+  .cover-title { font-size: 32px; height: 210px; letter-spacing: 12px; }
+  .chapter-meta { grid-template-columns: 1fr 1fr; }
+  .memory { grid-template-columns: 1fr; gap: 12px; }
+  .memory-figure { max-width: 320px; }
+  .commission > dl > div { grid-template-columns: 60px 1fr; }
+  .toolbar-hint { display: none; }
+}
+
+/* ══════════════ 打印 / 导出 PDF ══════════════ */
+@media print {
+  @page { size: A4 portrait; margin: 15mm 14mm; }
+
+  html, body {
+    background: #fff;
+    color: #000;
+  }
+  body { font-size: 10.5pt; line-height: 1.75; }
+
+  .no-print, .toolbar { display: none !important; }
+
+  .sheet { max-width: none; margin: 0; padding: 0; }
+
+  /* 去深色底、去阴影，转浅底黑字 */
+  .card, .cover, .contents, .chapter, .colophon {
+    background: #fff !important;
+    color: #000 !important;
+    border: 0;
+    border-left: 0;
+    box-shadow: none !important;
+    padding: 0;
+    margin: 0 0 8mm;
+  }
+
+  a { color: #000; text-decoration: none; }
+
+  /* 分页：每章另起一页（首章除外），卷首 / 目录 / 末页各自分页 */
+  .cover { break-after: page; }
+  .contents { break-after: page; }
+  .chapter { break-before: page; }
+  .chapter:first-of-type { break-before: auto; }
+  .colophon { break-before: page; }
+
+  /* 段落避免跨页断裂 */
+  .memory,
+  .voice,
+  .commission > dl > div,
+  .legend-explain > div,
+  .proto-list li,
+  .statement { break-inside: avoid; }
+
+  .chapter-head,
+  .section-title { break-after: avoid; }
+
+  /* 记忆配图限制高度，便于每页容纳多段 */
+  .memory { grid-template-columns: 46mm 1fr; gap: 5mm; padding: 3mm 0; }
+  .memory-figure img { border: 1px solid #999; max-height: 34mm; object-fit: contain; }
+  .memory-figure figcaption { font-size: 7.5pt; }
+
+  .cover-title { color: #000; border-right-color: #999; }
+  .cover-sub, .cover-kicker, .cover-foot { color: #333; }
+  .chapter-num { border-color: #666; color: #000; }
+  .chapter-index { color: #444; }
+  .chapter-title h2, .section-title, .colophon h2, .colophon h3 { color: #000; }
+  .chapter-sub, .chapter-meta dt, .memory-year, .memory-figure figcaption,
+  .contents .meta, .note { color: #333; }
+  .intro { background: #fff; border-left: 2px solid #666; }
+  .commission, .statement { background: #fff; border: 1px solid #999; }
+  .layer-tag, .layer-tag.l-fact, .layer-tag.l-legend, .layer-tag.l-orig { color: #000; border-color: #666; }
+  .cover-rule { background: #999; }
+  .cover-rule::after { background: #666; }
+}

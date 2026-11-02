@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1a2332">
+<meta name="description" content="《碎瓷重圆》融合出版衍生册 · 瓷器记忆手记（原创叙事，可打印导出 PDF）">
+<title>瓷器记忆手记 · 碎瓷重圆</title>
+<link rel="stylesheet" href="/src/journal.css">
+</head>
+<body>
+<!--
+  说明：本页放在项目根目录 journal/ 而非 public/。
+  原因：它需要作为独立的 Vite 构建入口（<script type="module" src="/src/journal.js">），
+  并由 src/journal.js 通过 ES module 直接 import 主数据源 src/data/vessels.js 与 src/data/culture.js，
+  保证「单源数据」不产生文案副本；构建后自动输出为 dist/journal/index.html（对应线上 /journal/ 路径）。
+  public/ 下的静态文件不参与模块打包，无法满足上述单源约束。
+-->
+<div class="toolbar no-print">
+  <button id="printBtn" type="button">打印 / 导出 PDF</button>
+  <span class="toolbar-hint">在浏览器打印对话框中选择「另存为 PDF」</span>
+</div>
+<main id="journal-root" class="sheet"></main>
+<script type="module" src="/src/journal.js"></script>
+</body>
+</html>

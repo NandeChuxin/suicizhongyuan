@@ -1,0 +1,168 @@
+/* 考察模块样式。调性沿用 immersive.css 第 1 行的调色板（--blue / --paper / --clay / --gold / --ink），
+   但在此页独立声明，避免把六屏游戏样式带进 3D 预览页。 */
+:root {
+  --blue: #2c4a7c;
+  --paper: #faf8f3;
+  --clay: #f5f2ea;
+  --gold: #c9a961;
+  --ink: #1a2332;
+  --kc-panel: rgba(16, 22, 32, 0.86);
+  --kc-line: rgba(201, 169, 97, 0.32);
+  --kc-mono: ui-monospace, "SFMono-Regular", "Consolas", "Courier New", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0d1218;
+  color: var(--paper);
+  font-family: "Songti SC", "Source Han Serif SC", "Noto Serif SC", Georgia, serif;
+}
+
+/* ---------------- 单景点预览 ---------------- */
+.kc-viewer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.kc-viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------- HUD ---------------- */
+.kc-hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(420px, 44vw);
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 18px 18px 26px;
+  background: linear-gradient(180deg, rgba(13, 18, 24, 0.92) 0%, rgba(13, 18, 24, 0.72) 78%, rgba(13, 18, 24, 0) 100%);
+  border-right: 1px solid var(--kc-line);
+  backdrop-filter: blur(6px);
+  font-size: 13px;
+  line-height: 1.65;
+  pointer-events: auto;
+}
+
+.kc-hud__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.kc-hud__kicker { margin: 0 0 4px; font-size: 11px; letter-spacing: 0.22em; color: var(--gold); font-family: var(--kc-mono); }
+.kc-hud__title { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: 0.04em; }
+.kc-hud__sub { margin: 4px 0 0; font-size: 12px; color: rgba(250, 248, 243, 0.66); }
+.kc-hud__back {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--paper);
+  text-decoration: none;
+  border: 1px solid var(--kc-line);
+  border-radius: 2px;
+}
+.kc-hud__back:hover { border-color: var(--gold); color: var(--gold); }
+
+.kc-hud__panel {
+  margin: 14px 0 0;
+  padding: 12px 13px;
+  background: var(--kc-panel);
+  border: 1px solid var(--kc-line);
+  border-radius: 3px;
+}
+.kc-hud__panel p { margin: 0 0 6px; }
+.kc-hud__ref-name { font-weight: 600; color: var(--gold); }
+.kc-hud__ref-src { font-family: var(--kc-mono); font-size: 12px; color: rgba(250, 248, 243, 0.9); word-break: break-all; }
+.kc-hud__ref-tag { font-family: var(--kc-mono); font-size: 11px; color: var(--gold); }
+.kc-hud__ref-tag[data-confidence="图测"] { color: #e8a33d; }
+.kc-hud__ref-tag[data-confidence="官网原文"] { color: #7fb3d5; }
+.kc-hud__ref-tag[data-confidence="标准"] { color: #9ecb8f; }
+.kc-hud__ref-note { font-size: 12px; color: rgba(250, 248, 243, 0.62); }
+.kc-hud__light, .kc-hud__camera { font-size: 12px; color: rgba(250, 248, 243, 0.8); }
+.kc-hud__stats, .kc-hud__budget, .kc-hud__perf {
+  font-family: var(--kc-mono);
+  font-size: 12px;
+  color: rgba(250, 248, 243, 0.86);
+}
+.kc-hud__stats[data-over="1"] { color: #ef7a6d; }
+.kc-hud__perf { color: #e8a33d; min-height: 1.2em; }
+
+.kc-hud__rows { margin: 12px 0 0; display: flex; flex-direction: column; gap: 7px; }
+.kc-hud__row { display: flex; align-items: center; gap: 8px; }
+.kc-hud__rowlabel { flex: 0 0 62px; font-size: 11px; letter-spacing: 0.12em; color: rgba(250, 248, 243, 0.5); }
+.kc-hud__btnrow { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.kc-btn {
+  padding: 3px 9px;
+  font: inherit;
+  font-size: 12px;
+  color: rgba(250, 248, 243, 0.82);
+  background: rgba(44, 74, 124, 0.28);
+  border: 1px solid var(--kc-line);
+  border-radius: 2px;
+  cursor: pointer;
+}
+.kc-btn:hover { border-color: var(--gold); }
+.kc-btn.is-active { background: rgba(201, 169, 97, 0.22); border-color: var(--gold); color: var(--gold); }
+
+.kc-hud__toggles { margin: 12px 0 0; display: flex; gap: 16px; font-size: 12px; }
+.kc-hud__toggles label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.kc-hud__toggles input { accent-color: var(--gold); }
+
+.kc-hud__anchors { margin: 12px 0 0; font-size: 12px; border-top: 1px solid var(--kc-line); padding-top: 8px; }
+.kc-hud__anchors summary { cursor: pointer; color: var(--gold); }
+.kc-hud__anchors ul { margin: 8px 0 0; padding-left: 16px; }
+.kc-hud__anchors li { margin-bottom: 4px; }
+
+.kc-tag { font-family: var(--kc-mono); font-size: 11px; }
+.kc-tag--标准 { color: #9ecb8f; }
+.kc-tag--官网原文 { color: #7fb3d5; }
+.kc-tag--图测 { color: #e8a33d; }
+
+.kc-hud__foot { margin: 12px 0 0; font-size: 11px; color: rgba(250, 248, 243, 0.42); }
+
+/* ---------------- 总览页 ---------------- */
+.kc-overview-page {
+  background: linear-gradient(160deg, #0f151d 0%, #1a2332 60%, #223044 100%);
+  min-height: 100vh;
+}
+.kc-overview {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 32px 80px;
+}
+.kc-overview__kicker { margin: 0; font-family: var(--kc-mono); font-size: 12px; letter-spacing: 0.3em; color: var(--gold); }
+.kc-overview__title { margin: 10px 0 6px; font-size: 34px; letter-spacing: 0.06em; }
+.kc-overview__lead { margin: 0 0 8px; max-width: 62ch; color: rgba(250, 248, 243, 0.72); line-height: 1.8; }
+.kc-overview__note { margin: 0 0 34px; font-size: 12px; color: rgba(250, 248, 243, 0.45); }
+
+.kc-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.kc-card__link {
+  display: block;
+  height: 100%;
+  padding: 22px 22px 20px;
+  color: var(--paper);
+  text-decoration: none;
+  background: rgba(250, 248, 243, 0.05);
+  border: 1px solid var(--kc-line);
+  border-radius: 3px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.kc-card__link:hover { border-color: var(--gold); background: rgba(201, 169, 97, 0.10); transform: translateY(-2px); }
+.kc-card__kicker { font-family: var(--kc-mono); font-size: 11px; color: rgba(250, 248, 243, 0.45); }
+.kc-card__title { margin: 8px 0 6px; font-size: 21px; }
+.kc-card__sub { margin: 0 0 12px; color: rgba(250, 248, 243, 0.66); font-size: 13px; }
+.kc-card__meta { margin: 0 0 16px; font-family: var(--kc-mono); font-size: 12px; color: rgba(250, 248, 243, 0.55); }
+.kc-card__cta { color: var(--gold); font-size: 13px; }
+
+@media (max-width: 720px) {
+  .kc-hud { width: 100vw; max-height: 46vh; border-right: none; border-bottom: 1px solid var(--kc-line); font-size: 12px; }
+  .kc-hud__title { font-size: 18px; }
+  .kc-overview { padding: 32px 18px 60px; }
+  .kc-overview__title { font-size: 26px; }
+}

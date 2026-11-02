@@ -1,9 +1,10 @@
-// 真实瓷器 GLB 加载：网页副本放在 public/models/ 下，用 meshopt 压缩 + WebP 贴图。
+// 真实瓷器 GLB 加载：网页副本放在 public/models/ 下，仅做几何简化 + WebP 纹理，
+// 禁用 meshopt/Draco/quantize 压缩（int16 量化在 Three.js 版本不匹配时会导致错位），
+// 保留 float32 顶点 → 无需额外解码器，Three.js 原生 GLTFLoader 直接加载。
 // 与考察模块共用 measureObject / disposeModel，避免重复实现包围盒与资源释放。
 // 任何失败都返回 { ok:false }，调用方静默回退程序化器身——模型缺失不应让页面出错。
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { measureObject, disposeModel } from '../kaocha/kernel/gltf.js';
 
 // Vite base 为 './'，public/ 下文件原样拷贝到 dist，因此模型走相对路径。
@@ -17,8 +18,6 @@ export async function loadVesselModel(path, { onProgress } = {}) {
   const url = vesselModelUrl(path);
   try {
     const loader = new GLTFLoader();
-    // 网页副本以 EXT_meshopt_compression 压缩几何；three 自带解码器，无需外部解码文件。
-    loader.setMeshoptDecoder(MeshoptDecoder);
     const gltf = await loader.loadAsync(url, event => {
       if (onProgress && event.total) onProgress(event.loaded / event.total);
     });

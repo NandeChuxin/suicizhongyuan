@@ -1,13 +1,14 @@
 // 真实瓷器 GLB → 网页优化副本。
 // 原始文件保留在项目根目录不动；产物写入 public/models/，供运行时按需加载。
-// 优化内容：几何简化到约 10% 顶点 + meshopt 压缩 + 贴图降到 2K WebP。
-// 选 meshopt 而非 Draco：three 自带 meshopt 解码器（three/addons/libs/meshopt_decoder.module.js），
-// 无需额外解码器文件，构建产物更干净。
+// 优化内容：几何简化到约 20% 顶点 + 贴图降到 2K WebP。
+// 关键：不用 meshopt/Draco/quantize 压缩——这些压缩方法会把 float32 顶点转 int16，
+// Three.js 对 KHR_mesh_quantization 的 dequantize 需要精确参数匹配，
+// 版本不匹配会导致 int16 被当成 raw float32 读取，坐标爆到 ±32768 → 模型七零八落错位。
+// 直接保留 float32 顶点（文件稍大但绝对正确），纹理用 WebP 压缩。
 //
 // 用法：
-//   npm run models              # 全部优化（已存在的产物跳过）
-//   node scripts/optimize-models.mjs --force        # 全部重做
-//   node scripts/optimize-models.mjs 玲珑           # 只处理文件名含「玲珑」的一件
+//   npm run models -- --force   # 全部重做
+//   node scripts/optimize-models.mjs --force 玲珑  # 只处理文件名含「玲珑」的一件
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -27,9 +28,9 @@ const MODELS = [
   ['青花玲珑镂空碗.glb', 'models/vessels/linglong.glb']
 ];
 
-// 简化后保留的顶点比例。1.5M 面 → 约 15 万面，落在「单场景 ≤50 万面」预算内。
-const SIMPLIFY_RATIO = '0.1';
-const SIMPLIFY_ERROR = '0.001';
+// 简化后保留的顶点比例。原始 78 万面 → 约 30 万面（20%），曲面完整度好。
+const SIMPLIFY_RATIO = '0.2';
+const SIMPLIFY_ERROR = '0.0005';
 const TEXTURE_SIZE = '2048';
 
 const force = process.argv.includes('--force');
@@ -49,14 +50,17 @@ for (const [source, target] of MODELS) {
   mkdirSync(dirname(output), { recursive: true });
   const before = statSync(input).size;
   const started = Date.now();
+  // --compress false：禁用 meshopt/draco/quantize 压缩，保留 float32 顶点。
+  // --flatten false --join false：保留节点层级，避免未来多部件模型被合并。
   const args = [
     '--yes', '@gltf-transform/cli@4', 'optimize', input, output,
-    '--compress', 'meshopt',
+    '--compress', 'false',
     '--simplify-ratio', SIMPLIFY_RATIO,
     '--simplify-error', SIMPLIFY_ERROR,
     '--texture-compress', 'webp',
     '--texture-size', TEXTURE_SIZE,
-    // 单材质模型不需要调色板贴图，关掉以减少不确定产物。
+    '--flatten', 'false',
+    '--join', 'false',
     '--palette', 'false'
   ];
   const run = spawnSync('npx', args, { stdio: 'inherit', cwd: ROOT, shell: true });
